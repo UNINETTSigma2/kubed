@@ -1,0 +1,7 @@
+package: scm.uninett.no/daas/dpk8s
+import:
+- package: github.com/pkg/browser
+- package: github.com/Sirupsen/logrus
+- package: github.com/davecgh/go-spew
+- package: github.com/parnurzeal/gorequest
+- package: github.com/m4rw3r/uuid
