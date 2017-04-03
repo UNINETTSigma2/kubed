@@ -35,7 +35,7 @@ func getJWTToken(access_token string, issuerUrl string) (string, error) {
 	return jwt.Token, nil
 }
 
-func getCACert(issuerUrl string) (string, error) {
+func getCACert(issuerUrl string) ([]byte, error) {
 	var ca CA
 
 	resp, _, err := gorequest.New().Get(issuerUrl + "/ca").
@@ -43,12 +43,12 @@ func getCACert(issuerUrl string) (string, error) {
 
 	if err != nil {
 		log.Warn("Failed in fetching CA certificate ", err)
-		return "", err[0]
+		return nil, err[0]
 	}
 
 	if resp != nil && resp.StatusCode != 200 {
 		log.Warn("Failed in fetching CA certificate, responsecode: ", resp.StatusCode)
-		return "", errors.New("Failed in fetching CA certificate")
+		return nil, errors.New("Failed in fetching CA certificate")
 	}
-	return ca.Cert, nil
+	return []byte(ca.Cert), nil
 }

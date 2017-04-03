@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/browser"
 )
 
@@ -21,8 +20,9 @@ var (
 	issuerScope = flag.String("issuer-scope", "gk_jwt", "Scope name of JWT Token Issuer")
 	clusterName = flag.String("name", "test", "Name of this Kubernetes cluster, used for context as well")
 	showVersion = flag.Bool("version", false, "Prints version information and exits")
+	keepContext = flag.Bool("keep-context", false, "Keep the current context or switch to newly created one")
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
-	client_id   = flag.String("client_id", "daa8f3c8-422f-40b5-a045-06e86b987557", "Client ID for Kubed app")
+	client_id   = flag.String("client-id", "daa8f3c8-422f-40b5-a045-06e86b987557", "Client ID for Kubed app")
 	version     = "none"
 	token       string
 	reqErr      error
@@ -45,7 +45,8 @@ func main() {
 
 	// Open brower to authenticate user and get access token
 	browser.OpenURL(authURL + "?response_type=token&scope=userid " + *issuerScope + "&client_id=" + *client_id)
-	if err := getToken(*port); err != nil {
+	err := getToken(*port)
+	if err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
 	wg.Wait() // Wait until we get the token back
@@ -54,16 +55,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	jwt, err := getJWTToken(token, *issuerUrl)
+	cfg := new(KubeConfigSetup)
+	cfg.Token, err = getJWTToken(token, *issuerUrl)
 	if err != nil {
 		log.Fatal("Failed in getting JWT token ", err)
 		os.Exit(1)
 	}
-	cert, err := getCACert(*issuerUrl)
+	cfg.CertificateAuthorityData, err = getCACert(*issuerUrl)
 	if err != nil {
 		log.Warn("No custom CA certificate provided, assuming running with standard certificate")
 	}
-	spew.Dump(jwt)
-	spew.Dump(cert)
+
+	cfg.ClusterName = *clusterName
+	cfg.ClusterServerAddress = *apiserver
+	cfg.kubeConfigFile = *kubeconfig
+	cfg.KeepContext = *keepContext
+
+	err = SetupKubeConfig(cfg)
+	if err != nil {
+		log.Fatal("Failed in setting the kubeconfig ", err)
+	}
 
 }

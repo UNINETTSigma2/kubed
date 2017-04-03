@@ -5,6 +5,6 @@ import:
 - package: github.com/davecgh/go-spew
 - package: github.com/parnurzeal/gorequest
 - package: github.com/m4rw3r/uuid
-- package: k8s.io/client-go/kubernetes
-- package: k8s.io/client-go/pkg/api/v1
-- package: k8s.io/client-go/tools/clientcmd
+- package: k8s.io/client-go
+  version: v2.0.0
+- package: github.com/pkg/errors
