@@ -1,7 +1,10 @@
-package: scm.uninett.no/daas/dpk8s
+package: github.com/uninett/kubed
 import:
 - package: github.com/pkg/browser
 - package: github.com/Sirupsen/logrus
 - package: github.com/davecgh/go-spew
 - package: github.com/parnurzeal/gorequest
 - package: github.com/m4rw3r/uuid
+- package: k8s.io/client-go/kubernetes
+- package: k8s.io/client-go/pkg/api/v1
+- package: k8s.io/client-go/tools/clientcmd

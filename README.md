@@ -1,4 +1,4 @@
 # kubed
-Register application in Dataporten using kubernetes objects
+Get User JWT token from Dataporten enabled Token Issuer to be used for communication with Kubernetes cluster.
 
-It takes Kubernetes Deployment and Ingress object as arguments and uses annotations to register the corresponding application in Dataporten on your behalf. It can be extended easily to support other Oauth2 providers e.g. Github.
+It also stores the obtsined token along with configuration under $HOME/.kube/config file. If the file already present it will merge the configuration for the obtained cluster with already present ones.

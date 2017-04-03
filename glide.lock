@@ -1,26 +1,26 @@
-hash: b4e683bede984531171ed913e304717f373252420eaa4bacb0f4380ae19fd2e4
-updated: 2016-12-09T10:02:20.36212814+01:00
+hash: a9710765a385da2a9d2d013c3dbde32f84b1fbf7485edcf3676f6104d17be650
+updated: 2017-04-03T08:55:58.681140977+02:00
 imports:
 - name: github.com/davecgh/go-spew
-  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  version: 04cdfd42973bb9c8589fd6a731800cf222fde1a9
   subpackages:
   - spew
 - name: github.com/m4rw3r/uuid
   version: 00c72d48d5aaaf3058e26d9641164c43ba239f33
-- name: github.com/moul/http2curl
-  version: b1479103caacaa39319f75e7f57fc545287fca0d
 - name: github.com/parnurzeal/gorequest
-  version: bdd24ac7ec2b0b2126f4782dd031644cbea1d223
+  version: ea779001e09326d30d455dbf37bc0d08c49941a2
 - name: github.com/pkg/browser
-  version: 9302be274faad99162b9d48ec97b24306872ebb0
+  version: 8189194c9f158043d6d45a0b939a47a924ea4b13
 - name: github.com/Sirupsen/logrus
-  version: f3cfb454f4c209e6668c95216c4744b8fddb2356
-- name: golang.org/x/net
-  version: e90d6d0afc4c315a0d87a568ae68577cc15149a0
-  subpackages:
-  - publicsuffix
+  version: 10f801ebc38b33738c9d17d50860f484a0988ff5
 - name: golang.org/x/sys
-  version: 8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9
+  version: 9a7256cb28ed514b4e1e5f68959914c4c28a92e0
   subpackages:
   - unix
+- name: k8s.io/client-go
+  version: 63e44d4493582c21461eae81027de697afd39d6a
+  subpackages:
+  - kubernetes
+  - pkg/api/v1
+  - tools/clientcmd
 testImports: []
