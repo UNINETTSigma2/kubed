@@ -8,3 +8,4 @@ import:
 - package: k8s.io/client-go
   version: v2.0.0
 - package: github.com/pkg/errors
+- package: gopkg.in/yaml.v2
