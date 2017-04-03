@@ -71,14 +71,39 @@ func saveConfig(cluster *Cluster) error {
 	path := filepath.Join(home, kubedConf)
 
 	var clusters []Cluster
-	clusters = append(clusters, *cluster)
-	confBytes, err := yaml.Marshal(clusters)
+
+	oldConfBytes, err := ioutil.ReadFile(path)
+	if err == nil {
+		err = yaml.Unmarshal(oldConfBytes, &clusters)
+		if err != nil {
+			log.Error("Failed in parsing config file ", err)
+			clusters = nil
+		}
+	}
+
+	found := false
+	if clusters != nil {
+		for i, c := range clusters {
+			// Insert the recent config
+			if c.Name == cluster.Name {
+				clusters[i] = *cluster
+				found = true
+			}
+		}
+		if !found {
+			clusters = append(clusters, *cluster)
+		}
+	} else {
+		clusters = append(clusters, *cluster)
+	}
+
+	newConfBytes, err := yaml.Marshal(clusters)
 	if err != nil {
 		log.Warn("Failed in marshaling kubedconfig ", err)
 		return err
 	}
 
-	err = ioutil.WriteFile(path, confBytes, 0644)
+	err = ioutil.WriteFile(path, newConfBytes, 0644)
 	if err != nil {
 		log.Warn("Failed in saving kubedconfig ", err)
 		return err
