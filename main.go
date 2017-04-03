@@ -15,11 +15,14 @@ import (
 const authURL = "https://auth.dataporten.no/oauth/authorization"
 
 var (
-	kubeconfig  = flag.String("kubeconfig", "./config", "absolute path to the kubeconfig file")
+	kubeconfig  = flag.String("kubeconfig", "./config", "Path to the kubeconfig config to manage settings")
 	apiserver   = flag.String("apiserver", "https://localhost", "Address of Kubernetes API server")
+	issuerUrl   = flag.String("issuer-url", "https://token.example.no", "Address of JWT Token Issuer")
+	issuerScope = flag.String("issuer-scope", "gk_jwt", "Scope name of JWT Token Issuer")
+	clusterName = flag.String("name", "test", "Name of this Kubernetes cluster, used for context as well")
 	showVersion = flag.Bool("version", false, "Prints version information and exits")
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
-	client_id   = flag.String("client_id", "3181c169-9fbe-4f31-8802-06e45cab9b00", "Client ID for Kubed app")
+	client_id   = flag.String("client_id", "daa8f3c8-422f-40b5-a045-06e86b987557", "Client ID for Kubed app")
 	version     = "none"
 	token       string
 	reqErr      error
@@ -41,15 +44,26 @@ func init() {
 func main() {
 
 	// Open brower to authenticate user and get access token
-	browser.OpenURL(authURL + "?response_type=token&scope=gk_jwt+userid&client_id=" + *client_id)
+	browser.OpenURL(authURL + "?response_type=token&scope=userid " + *issuerScope + "&client_id=" + *client_id)
 	if err := getToken(*port); err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
 	wg.Wait() // Wait until we get the token back
 	if reqErr != nil {
-		log.Fatal("Error in getting access token", reqErr)
+		log.Fatal("Error in getting access token ", reqErr)
 		os.Exit(1)
 	}
 
-	spew.Dump(token)
+	jwt, err := getJWTToken(token, *issuerUrl)
+	if err != nil {
+		log.Fatal("Failed in getting JWT token ", err)
+		os.Exit(1)
+	}
+	cert, err := getCACert(*issuerUrl)
+	if err != nil {
+		log.Warn("No custom CA certificate provided, assuming running with standard certificate")
+	}
+	spew.Dump(jwt)
+	spew.Dump(cert)
+
 }
