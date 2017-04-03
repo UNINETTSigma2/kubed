@@ -1,10 +1,8 @@
-hash: 8d06c01b678bdeca5f8c123ae745d50a72dbdbb87f0cfbb9ac3fb55651687a6a
-updated: 2017-04-03T14:23:16.809659891+02:00
+hash: 1d021c3916a999a88854fc38e28242dbe8b6e958e5a4685186498aeb44991468
+updated: 2017-04-03T19:31:36.984692905+02:00
 imports:
 - name: github.com/davecgh/go-spew
   version: 346938d642f2ec3594ed81d874461961cd0faa76
-  subpackages:
-  - spew
 - name: github.com/emicklei/go-restful
   version: 89ef8af493ab468a45a42bb0d89a06fccdd2fb22
   subpackages:
