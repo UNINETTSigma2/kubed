@@ -12,6 +12,7 @@ import (
 )
 
 const authURL = "https://auth.dataporten.no/oauth/authorization"
+const kubedConf = ".kubedconf"
 
 var (
 	kubeconfig  = flag.String("kubeconfig", "~/.kube/config", "Absolute path to the kubeconfig config to manage settings")
@@ -42,10 +43,33 @@ func init() {
 
 func main() {
 
+	var cluster *Cluster
+	var err error
+	if len(os.Args) == 3 && os.Args[1] == "-name" {
+		cluster, err = readConfig(*clusterName)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		cluster = setConfig(
+			*clusterName,
+			*apiserver,
+			*issuerUrl,
+			*client_id,
+			*kubeconfig,
+			*keepContext,
+			*port)
+
+		// Save the current cluster config, so we can reuse it during token renewal
+		err = saveConfig(cluster)
+		if err != nil {
+			log.Fatal("Failed in saving kubedconfig ", err)
+		}
+	}
+
 	// Open brower to authenticate user and get access token
-	browser.OpenURL(authURL + "?response_type=token&client_id=" + *client_id)
-	err := getToken(*port)
-	if err != nil {
+	browser.OpenURL(authURL + "?response_type=token&client_id=" + cluster.ClientID)
+	if err = getToken(cluster.Port); err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
 	wg.Wait() // Wait until we get the token back
@@ -54,25 +78,28 @@ func main() {
 		os.Exit(1)
 	}
 
+	log.Info("Requesting JWT Token from ", cluster.IssuerUrl)
+
 	cfg := new(KubeConfigSetup)
-	cfg.Token, err = getJWTToken(token, *issuerUrl)
+	cfg.Token, err = getJWTToken(token, cluster.IssuerUrl)
 	if err != nil {
 		log.Fatal("Failed in getting JWT token ", err)
 		os.Exit(1)
 	}
-	cfg.CertificateAuthorityData, err = getCACert(*issuerUrl)
+	cfg.CertificateAuthorityData, err = getCACert(cluster.IssuerUrl)
 	if err != nil {
 		log.Warn("No custom CA certificate provided, assuming running with standard certificate")
 	}
 
-	cfg.ClusterName = *clusterName
-	cfg.ClusterServerAddress = *apiserver
-	cfg.kubeConfigFile = *kubeconfig
-	cfg.KeepContext = *keepContext
+	cfg.ClusterName = cluster.Name
+	cfg.ClusterServerAddress = cluster.APIServer
+	cfg.kubeConfigFile = cluster.KubeConfig
+	cfg.KeepContext = cluster.KeepContext
 
 	err = SetupKubeConfig(cfg)
 	if err != nil {
 		log.Fatal("Failed in setting the kubeconfig ", err)
 	}
 
+	log.Info("Kubernetes configuration has been saved in ", cluster.KubeConfig, " with context ", cluster.Name)
 }
