@@ -14,7 +14,7 @@ import (
 const authURL = "https://auth.dataporten.no/oauth/authorization"
 
 var (
-	kubeconfig  = flag.String("kubeconfig", "./config", "Path to the kubeconfig config to manage settings")
+	kubeconfig  = flag.String("kubeconfig", "~/.kube/config", "Absolute path to the kubeconfig config to manage settings")
 	apiserver   = flag.String("apiserver", "https://localhost", "Address of Kubernetes API server")
 	issuerUrl   = flag.String("issuer", "https://token.example.no", "Address of JWT Token Issuer")
 	clusterName = flag.String("name", "test", "Name of this Kubernetes cluster, used for context as well")
