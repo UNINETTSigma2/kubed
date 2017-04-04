@@ -17,15 +17,15 @@ const authURL = "https://auth.dataporten.no/oauth/authorization"
 const kubedConf = ".kubedconf"
 
 var (
-	kubeconfig  = flag.String("kubeconfig", "~/.kube/config", "Absolute path to the kubeconfig config to manage settings")
-	apiserver   = flag.String("apiserver", "https://localhost", "Address of Kubernetes API server")
-	issuerUrl   = flag.String("issuer", "https://token.example.no", "Address of JWT Token Issuer")
-	clusterName = flag.String("name", "test", "Name of this Kubernetes cluster, used for context as well")
+	kubeconfig  = flag.String("kube-config", "~/.kube/config", "Absolute path to the kubeconfig config to manage settings")
+	apiserver   = flag.String("api-server", "", "Address of Kubernetes API server (Required)")
+	issuerUrl   = flag.String("issuer", "", "Address of JWT Token Issuer (Required)")
+	clusterName = flag.String("name", "", "Name of this Kubernetes cluster, used for context as well (Required)")
 	showVersion = flag.Bool("version", false, "Prints version information and exits")
 	keepContext = flag.Bool("keep-context", false, "Keep the current context or switch to newly created one")
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
-	client_id   = flag.String("client-id", "daa8f3c8-422f-40b5-a045-06e86b987557", "Client ID for Kubed app")
+	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
 	version     = "none"
 	token       string
 	reqErr      error
