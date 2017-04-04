@@ -1,0 +1,9 @@
+language: go
+go:
+- 1.8.x
+before_install:
+- mkdir -p $GOPATH/bin
+- curl https://glide.sh/get | sh
+- mv $GOPATH/src/github.com/UNINETT $GOPATH/src/github.com/uninett
+- cd $GOPATH/src/github.com/uninett/kubed
+- glide install
