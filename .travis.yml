@@ -7,3 +7,15 @@ before_install:
 - mv $GOPATH/src/github.com/UNINETT $GOPATH/src/github.com/uninett
 - cd $GOPATH/src/github.com/uninett/kubed
 - glide install
+deploy:
+  provider: releases
+  api_key:
+    secure: nXjbsoOoN7TM62jDfDPWZPVmnu7ZCKabBYhVOWrzLxmCJaRZsIAgHnDK13iu4ntkDg2aW9JUM13MwJIu/q5zqeBY9ZDZPNX7TgR6r2v0JeVr8BhrgsvV26LqpQJul1Oqwd4+T8Z91NiOgYbxVLq9Lz6EMEjy3RL9IS3cm2khQCe1shs4h7v6JGFNCPnzUwvDUGFOqZbo6nrQy9LcYLgmf627s3hniTNREgzDUwcRqGq/qq30eI8nEWbjj4gySrwAE2ONsSXT7NBEDZzkMuDCEAQk8oPTa6tne23A8HOSSfnjRStgBXjw7aIJUDT5iXRSE84ZEaIr5tVGdqOWHRZc9NQ1C04y8ZCXzAxvjq7V3pG/e4njO6N/990+yQsTgpCun7Ztb9Fce5VgJfJ6NtXVoKMdUlXSEURqyOolfbw1QNBen5CjUT6OLz/4H/jsTbvCmrSjGjn98MQ9Nbj0AyofnUTFQxVCn1Aj0D5hHL3xUU4Zac722/luEL6VGZRDhkwxgJE4RO1Uj/uKyYY2swKQ6LZoDl+dSJt2OJ0P/Lcahz8lTU3Ujnkw/NlAmqH2f/KuUduZuwsBNMuJNKbs0kG8xuTYvGNjz+FOKHsgdvjuVqoCeGqUZOuX1jFZX50pGULsyAJ+Wf1e/3bRr71jnRflY9Cj6iB7ON00trIgQnror98=
+  file:
+    - dist/kubed-linux-amd64
+    - dist/kubed-darwin-amd64
+    - dist/kubed-windows-amd64.exe
+  skip_cleanup: true
+  on:
+    repo: UNINETT/kubed
+    tags: true
