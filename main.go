@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
 	"os"
 	"sync"
@@ -65,6 +66,12 @@ func main() {
 		if err != nil {
 			log.Fatal("Failed in saving kubedconfig ", err)
 		}
+	}
+
+	// Fix Home Path for Kubeconfig
+	if strings.HasPrefix(cluster.KubeConfig, "~") {
+		home := os.Getenv("HOME")
+		cluster.KubeConfig = strings.Replace(cluster.KubeConfig, "~", home, 1)
 	}
 
 	// Open brower to authenticate user and get access token
