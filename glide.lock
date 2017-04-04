@@ -1,6 +1,8 @@
-hash: 1d021c3916a999a88854fc38e28242dbe8b6e958e5a4685186498aeb44991468
-updated: 2017-04-03T19:31:36.984692905+02:00
+hash: 7099504ea2768865a4bcb40aa1f2d4b2b4a5cbfaac0b5476e2bf4814f9156812
+updated: 2017-04-04T08:33:14.95530597+02:00
 imports:
+- name: github.com/bclicn/color
+  version: 4c02eff8a28c1add99b3b5b238c165056c3bea8e
 - name: github.com/davecgh/go-spew
   version: 346938d642f2ec3594ed81d874461961cd0faa76
 - name: github.com/emicklei/go-restful

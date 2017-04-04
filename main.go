@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/bclicn/color"
 	"github.com/pkg/browser"
 )
 
@@ -109,4 +110,5 @@ func main() {
 	}
 
 	log.Info("Kubernetes configuration has been saved in ", cluster.KubeConfig, " with context ", cluster.Name)
+	fmt.Println(color.Green("To renew JWT token for this cluster run: " + color.BGreen("kubed -name "+cluster.Name)))
 }

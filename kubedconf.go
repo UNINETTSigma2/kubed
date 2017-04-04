@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -42,7 +41,6 @@ func readConfig(name string) (*Cluster, error) {
 		}
 	}
 
-	spew.Dump(clusters)
 	return nil, errors.New("Provided cluster not configured, run with full config parameters to configure it")
 }
 

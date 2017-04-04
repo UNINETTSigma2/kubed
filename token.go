@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	//"github.com/davecgh/go-spew/spew"
 	"net"
 	"net/http"
 )
@@ -30,7 +29,6 @@ func getToken(port int) error {
 	srv := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// This is to handle fragment parsing in implicit code flow
-			//spew.Dump(r)
 			if r.RequestURI == "/" {
 				w.Write(getJS())
 				return
