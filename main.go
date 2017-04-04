@@ -24,6 +24,7 @@ var (
 	showVersion = flag.Bool("version", false, "Prints version information and exits")
 	keepContext = flag.Bool("keep-context", false, "Keep the current context or switch to newly created one")
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
+	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
 	client_id   = flag.String("client-id", "daa8f3c8-422f-40b5-a045-06e86b987557", "Client ID for Kubed app")
 	version     = "none"
 	token       string
@@ -47,8 +48,8 @@ func main() {
 
 	var cluster *Cluster
 	var err error
-	if len(os.Args) == 3 && os.Args[1] == "-name" {
-		cluster, err = readConfig(*clusterName)
+	if *renew != "" {
+		cluster, err = readConfig(*renew)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -110,5 +111,5 @@ func main() {
 	}
 
 	log.Info("Kubernetes configuration has been saved in ", cluster.KubeConfig, " with context ", cluster.Name)
-	fmt.Println(color.Green("To renew JWT token for this cluster run: " + color.BGreen("kubed -name "+cluster.Name)))
+	fmt.Println(color.Green("To renew JWT token for this cluster run: " + color.BGreen("kubed -renew "+cluster.Name)))
 }

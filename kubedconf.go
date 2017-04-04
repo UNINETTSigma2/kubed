@@ -41,7 +41,7 @@ func readConfig(name string) (*Cluster, error) {
 		}
 	}
 
-	return nil, errors.New("Provided cluster not configured, run with full config parameters to configure it")
+	return nil, errors.New("Provided cluster not found, run with full config parameters to configure it")
 }
 
 func setConfig(
