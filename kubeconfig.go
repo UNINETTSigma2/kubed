@@ -38,8 +38,6 @@ type KubeConfigSetup struct {
 // activeContext is true when minikube is the CurrentContext
 // If no CurrentContext is set, the given name will be used.
 func SetupKubeConfig(cfg *KubeConfigSetup) error {
-	log.Info("Using kubeconfig: ", cfg.kubeConfigFile)
-
 	// read existing config or create new if does not exist
 	config, err := ReadConfigOrNew(cfg.kubeConfigFile)
 	if err != nil {

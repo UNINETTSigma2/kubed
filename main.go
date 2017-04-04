@@ -46,6 +46,11 @@ func init() {
 
 func main() {
 
+	if len(os.Args) < 3 {
+		fmt.Println(color.Red("Please provide parameters to run Kubed, refer " + color.BRed("kubed -h")))
+		os.Exit(1)
+	}
+
 	var cluster *Cluster
 	var err error
 	if *renew != "" {
@@ -62,6 +67,12 @@ func main() {
 			*kubeconfig,
 			*keepContext,
 			*port)
+
+		// Check if we have all the required parameters
+		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
+			fmt.Println(color.Red("Please provide all the required parameter, refer " + color.BRed("kubed -h")))
+			os.Exit(1)
+		}
 
 		// Save the current cluster config, so we can reuse it during token renewal
 		err = saveConfig(cluster)
