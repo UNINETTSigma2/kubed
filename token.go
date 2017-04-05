@@ -45,7 +45,7 @@ func getToken(port int) error {
 				reqErr = errors.New("Missing 'token_type' parameter from server.")
 			}
 
-			wg.Done()
+			defer wg.Done()
 		}),
 	}
 	wg.Add(1)
