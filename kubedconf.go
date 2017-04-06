@@ -15,7 +15,7 @@ type Cluster struct {
 	APIServer   string `yaml:"apiserver"`
 	IssuerUrl   string `yaml:"issuer"`
 	ClientID    string `yaml:"clientid"`
-	KubeConfig  string `yaml:kubeconfig"`
+	KubeConfig  string `yaml:"kubeconfig"`
 	KeepContext bool   `yaml:"keepcontext"`
 	Port        int    `yaml:"port"`
 }

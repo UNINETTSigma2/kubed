@@ -8,7 +8,7 @@ import (
 )
 
 type JWTToken struct {
-	Token string `json:token`
+	Token string `json:"token"`
 }
 
 type CA struct {
