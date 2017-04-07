@@ -8,7 +8,6 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/bclicn/color"
 	"github.com/pkg/browser"
 )
 
@@ -40,8 +39,7 @@ func init() {
 func main() {
 
 	if len(os.Args) < 3 {
-		fmt.Println(color.Red("Please provide parameters to run Kubed, refer " + color.BRed("kubed -h")))
-		os.Exit(1)
+		log.Fatal("Please provide parameters to run Kubed, refer kubed -h")
 	}
 
 	var cluster *Cluster
@@ -63,8 +61,7 @@ func main() {
 
 		// Check if we have all the required parameters
 		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
-			fmt.Println(color.Red("Please provide all the required parameter, refer " + color.BRed("kubed -h")))
-			os.Exit(1)
+			log.Fatal("Please provide all the required parameter, refer kubed -h")
 		}
 
 		// Save the current cluster config, so we can reuse it during token renewal
@@ -117,5 +114,5 @@ func main() {
 	}
 
 	log.Info("Kubernetes configuration has been saved in ", cluster.KubeConfig, " with context ", cluster.Name)
-	fmt.Println(color.Green("To renew JWT token for this cluster run: " + color.BGreen("kubed -renew "+cluster.Name)))
+	log.Info("To renew JWT token for this cluster run: kubed -renew ", cluster.Name)
 }

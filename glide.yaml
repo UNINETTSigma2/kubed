@@ -9,4 +9,3 @@ import:
   version: v2.0.0
 - package: github.com/pkg/errors
 - package: gopkg.in/yaml.v2
-- package: github.com/bclicn/color
