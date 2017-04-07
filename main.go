@@ -42,7 +42,7 @@ func init() {
 func main() {
 
 	if len(os.Args) < 3 {
-		log.Fatal("Please provide parameters to run Kubed, refer kubed -h")
+		log.Fatal("Please provide parameters to run Kubed, refer ", os.Args[0], " -h")
 	}
 
 	var cluster *Cluster
@@ -64,7 +64,7 @@ func main() {
 
 		// Check if we have all the required parameters
 		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
-			log.Fatal("Please provide all the required parameter, refer kubed -h")
+			log.Fatal("Please provide all the required parameter, refer ", os.Args[0], " -h")
 		}
 
 		// Save the current cluster config, so we can reuse it during token renewal
@@ -116,6 +116,6 @@ func main() {
 		log.Fatal("Failed in setting the kubeconfig ", err)
 	}
 
-	log.Info("Kubernetes configuration has been saved in ", cluster.KubeConfig, " with context ", cluster.Name)
-	log.Info("To renew JWT token for this cluster run: kubed -renew ", cluster.Name)
+	log.Info("Kubernetes configuration has been saved in \"", cluster.KubeConfig, "\" with context \"", cluster.Name, "\"")
+	log.Info("To renew JWT token for this cluster run: \"", os.Args[0], " -renew ", cluster.Name, "\"")
 }
