@@ -1,10 +1,11 @@
 package main
 
 import (
-	"errors"
+	"context"
 	"fmt"
-	"net"
 	"net/http"
+
+	"github.com/pkg/errors"
 )
 
 func getJS() []byte {
@@ -18,15 +19,14 @@ func getJS() []byte {
 	`)
 }
 
-func getToken(port int) error {
-	listener, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
-	if err != nil {
-		return err
-	}
+func getToken(port int) (string, error) {
+
+	done := make(chan string)
 
 	// This server waits for the redirect coming back from API server, populates
-	// token and reqErr from that request, and then stops itself.
+	// reqErr and returns the toke from that request, and then stops itself.
 	srv := &http.Server{
+		Addr: fmt.Sprintf("localhost:%d", port),
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// This is to handle fragment parsing in implicit code flow
 			if r.RequestURI == "/" {
@@ -34,21 +34,24 @@ func getToken(port int) error {
 				return
 			}
 
-			// Stop listening once we've gotten a request.
-			listener.Close()
 			if r.Method != "GET" {
 				reqErr = errors.New("The server made a bad request: Only GET is allowed")
 			}
 
-			token = r.URL.Query().Get("access_token")
+			token := r.URL.Query().Get("access_token")
 			if token == "" {
 				reqErr = errors.New("Missing 'token_type' parameter from server.")
 			}
-
-			defer wg.Done()
+			done <- token
 		}),
 	}
-	wg.Add(1)
-	go srv.Serve(listener)
-	return nil
+	go srv.ListenAndServe()
+
+	token := <-done
+
+	err := srv.Shutdown(context.Background())
+	if err != nil {
+		return token, errors.Wrap(err, "Error shutting down server")
+	}
+	return token, nil
 }

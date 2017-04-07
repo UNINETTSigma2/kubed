@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"os"
-	"sync"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bclicn/color"
@@ -27,9 +26,7 @@ var (
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
 	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
 	version     = "none"
-	token       string
 	reqErr      error
-	wg          sync.WaitGroup
 )
 
 func init() {
@@ -87,12 +84,13 @@ func main() {
 		cluster.KubeConfig = strings.Replace(cluster.KubeConfig, "~", home, 1)
 	}
 
-	// Open brower to authenticate user and get access token
+	// Open browser to authenticate user and get access token
 	browser.OpenURL(authURL + "?response_type=token&client_id=" + cluster.ClientID)
-	if err = getToken(cluster.Port); err != nil {
+	token, err := getToken(cluster.Port)
+	if err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
-	wg.Wait() // Wait until we get the token back
+	//wg.Wait() // Wait until we get the token back
 	if reqErr != nil {
 		log.Fatal("Error in getting access token ", reqErr)
 		os.Exit(1)
