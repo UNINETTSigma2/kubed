@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -39,17 +38,16 @@ func getToken(port int) (string, error) {
 			}
 
 			token := r.URL.Query().Get("access_token")
-			if token == "" {
-				reqErr = errors.New("Missing 'token_type' parameter from server.")
+			if token != "" {
+				done <- token
 			}
-			done <- token
 		}),
 	}
 	go srv.ListenAndServe()
 
 	token := <-done
 
-	err := srv.Shutdown(context.Background())
+	err := srv.Close()
 	if err != nil {
 		return token, errors.Wrap(err, "Error shutting down server")
 	}
