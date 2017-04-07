@@ -90,7 +90,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
-	//wg.Wait() // Wait until we get the token back
 	if reqErr != nil {
 		log.Fatal("Error in getting access token ", reqErr)
 		os.Exit(1)

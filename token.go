@@ -24,7 +24,7 @@ func getToken(port int) (string, error) {
 	done := make(chan string)
 
 	// This server waits for the redirect coming back from API server, populates
-	// reqErr and returns the toke from that request, and then stops itself.
+	// reqErr and returns the token from that request, and then stops itself.
 	srv := &http.Server{
 		Addr: fmt.Sprintf("localhost:%d", port),
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
