@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"runtime"
 	"strings"
 
 	"os"
@@ -76,7 +77,12 @@ func main() {
 
 	// Fix Home Path for Kubeconfig
 	if strings.HasPrefix(cluster.KubeConfig, "~") {
-		home := os.Getenv("HOME")
+		home := ""
+		if runtime.GOOS == "windows" {
+			home = os.Getenv("HOMEPATH")
+		} else {
+			home = os.Getenv("HOME")
+		}
 		cluster.KubeConfig = strings.Replace(cluster.KubeConfig, "~", home, 1)
 	}
 
