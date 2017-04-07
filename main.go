@@ -8,6 +8,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	colorable "github.com/mattn/go-colorable"
 	"github.com/pkg/browser"
 )
 
@@ -29,6 +30,8 @@ var (
 )
 
 func init() {
+	log.SetFormatter(&log.TextFormatter{ForceColors: true})
+	log.SetOutput(colorable.NewColorableStdout())
 	flag.Parse()
 	if *showVersion {
 		fmt.Println("kubed version", version)
