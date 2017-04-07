@@ -30,10 +30,6 @@ var (
 )
 
 func init() {
-	// Log as JSON to stderr
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetOutput(os.Stderr)
-
 	flag.Parse()
 	if *showVersion {
 		fmt.Println("kubed version", version)
@@ -83,6 +79,8 @@ func main() {
 		home := os.Getenv("HOME")
 		cluster.KubeConfig = strings.Replace(cluster.KubeConfig, "~", home, 1)
 	}
+
+	log.Info("Requesting Access Token from Dataporten")
 
 	// Open browser to authenticate user and get access token
 	browser.OpenURL(authURL + "?response_type=token&client_id=" + cluster.ClientID)
