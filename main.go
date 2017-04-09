@@ -28,6 +28,7 @@ var (
 	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
 	version     = "none"
 	reqErr      error
+	home        = ""
 )
 
 func init() {
@@ -75,14 +76,15 @@ func main() {
 		}
 	}
 
+	// Set the home path based on OS
+	if runtime.GOOS == "windows" {
+		home = os.Getenv("HOMEPATH")
+	} else {
+		home = os.Getenv("HOME")
+	}
+
 	// Fix Home Path for Kubeconfig
 	if strings.HasPrefix(cluster.KubeConfig, "~") {
-		home := ""
-		if runtime.GOOS == "windows" {
-			home = os.Getenv("HOMEPATH")
-		} else {
-			home = os.Getenv("HOME")
-		}
 		cluster.KubeConfig = strings.Replace(cluster.KubeConfig, "~", home, 1)
 	}
 

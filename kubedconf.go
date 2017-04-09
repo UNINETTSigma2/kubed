@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	log "github.com/Sirupsen/logrus"
@@ -21,7 +20,6 @@ type Cluster struct {
 }
 
 func readConfig(name string) (*Cluster, error) {
-	home := os.Getenv("HOME")
 	path := filepath.Join(home, kubedConf)
 	confBytes, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -65,7 +63,6 @@ func setConfig(
 }
 
 func saveConfig(cluster *Cluster) error {
-	home := os.Getenv("HOME")
 	path := filepath.Join(home, kubedConf)
 
 	var clusters []Cluster
