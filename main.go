@@ -39,6 +39,13 @@ func init() {
 		fmt.Println("kubed version", version)
 		os.Exit(0)
 	}
+
+	// Set the home path based on OS
+	if runtime.GOOS == "windows" {
+		home = os.Getenv("HOMEPATH")
+	} else {
+		home = os.Getenv("HOME")
+	}
 }
 
 func main() {
@@ -74,13 +81,6 @@ func main() {
 		if err != nil {
 			log.Fatal("Failed in saving kubedconfig ", err)
 		}
-	}
-
-	// Set the home path based on OS
-	if runtime.GOOS == "windows" {
-		home = os.Getenv("HOMEPATH")
-	} else {
-		home = os.Getenv("HOME")
 	}
 
 	// Fix Home Path for Kubeconfig
