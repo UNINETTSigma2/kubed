@@ -18,6 +18,29 @@ func getJS() []byte {
 	`)
 }
 
+func getClosingPage() []byte {
+	return []byte(`<!DOCTYPE html>
+		<html style="background: #E5E0DC;">
+		<head>
+			<title>Processing response</title>
+			<style type="text/css">
+			body {
+				font-family: "Arial", "sans-serif";
+				background: #00404D;
+				color: #fff;
+				padding: 4em;
+				margin: 4em;
+				border: 1px solid #aaa;
+			}
+			</style>
+		</head>
+		<body>
+				<h1>Kubed has successfully processed response.</h1>
+				<p>Please close this window and return to the command line.</p>
+		</body>
+		</html>`)
+}
+
 func getToken(port int) (string, error) {
 
 	done := make(chan string)
@@ -39,6 +62,7 @@ func getToken(port int) (string, error) {
 
 			token := r.URL.Query().Get("access_token")
 			if token != "" {
+				w.Write(getClosingPage())
 				done <- token
 			}
 		}),
