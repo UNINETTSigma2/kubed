@@ -91,10 +91,12 @@ func main() {
 	log.Info("Requesting Access Token from Dataporten")
 
 	// Open browser to authenticate user and get access token
-	err = browser.OpenURL(authURL + "?response_type=token&client_id=" + cluster.ClientID)
-	if err != nil {
-		log.Fatal("Failed in opening browser ", err)
-	}
+	go func(dataportenAuthURL string) {
+		err = browser.OpenURL(dataportenAuthURL)
+		if err != nil {
+			log.Fatal("Failed in opening browser ", err)
+		}
+	} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
 
 	token, err := getToken(cluster.Port)
 	if err != nil {
