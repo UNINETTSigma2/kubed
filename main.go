@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"bufio"
 
 	"os"
 
@@ -26,6 +27,7 @@ var (
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
 	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
+	manual_input= flag.Bool("manual-input", false, "Input authentication token manually (no local browser)")
 	version     = "none"
 	reqErr      error
 	home        = ""
@@ -69,7 +71,8 @@ func main() {
 			*client_id,
 			*kubeconfig,
 			*keepContext,
-			*port)
+			*port,
+			*manual_input)
 
 		// Check if we have all the required parameters
 		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
@@ -89,16 +92,25 @@ func main() {
 	}
 
 	log.Info("Requesting Access Token from Dataporten")
+	err = nil
+	token := ""
+	if (cluster.ManualInput) {
+		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID + ", then report the return token below.")
+		fmt.Print("Token: ")
+		token, err = bufio.NewReader(os.Stdin).ReadString('\n')
+		token = token[:len(token)-1]
+	} else {
+		// Open browser to authenticate user and get access token
+		go func(dataportenAuthURL string) {
+			err = browser.OpenURL(dataportenAuthURL)
+			if err != nil {
+				log.Fatal("Failed in opening browser ", err)
+			}
+		} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
 
-	// Open browser to authenticate user and get access token
-	go func(dataportenAuthURL string) {
-		err = browser.OpenURL(dataportenAuthURL)
-		if err != nil {
-			log.Fatal("Failed in opening browser ", err)
-		}
-	} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
+		token, err = getToken(cluster.Port)
+	}
 
-	token, err := getToken(cluster.Port)
 	if err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
