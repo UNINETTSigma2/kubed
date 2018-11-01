@@ -96,13 +96,15 @@ func main() {
 	log.Info("Requesting Access Token from Dataporten")
 	err = nil
 	token := ""
+
+	// Manually fetch token if browser is unavailable from console:
 	if (cluster.ManualInput) {
 		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID + ", then report the return token below.")
-		fmt.Print("Token: ")
+		fmt.Print("access_token from redirect url: ")
 		token, err = bufio.NewReader(os.Stdin).ReadString('\n')
 		token = token[:len(token)-1]
+	// Open browser to authenticate user and get access token otherwise:
 	} else {
-		// Open browser to authenticate user and get access token
 		go func(dataportenAuthURL string) {
 			err = browser.OpenURL(dataportenAuthURL)
 			if err != nil {
