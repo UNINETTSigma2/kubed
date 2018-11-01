@@ -4,8 +4,7 @@ go:
 before_install:
 - mkdir -p $GOPATH/bin
 - curl https://glide.sh/get | sh
-- mv $GOPATH/src/github.com/UNINETT $GOPATH/src/github.com/uninett
-- cd $GOPATH/src/github.com/uninett/kubed
+- cd $TRAVIS_BUILD_DIR
 - glide install
 deploy:
   provider: releases
