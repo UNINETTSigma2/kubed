@@ -27,6 +27,7 @@ var (
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
 	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
+	namespace   = flag.String("namespace", "", "Default namespace to use (optional)")
 	manual_input= flag.Bool("manual-input", false, "Input authentication token manually (no local browser)")
 	version     = "none"
 	reqErr      error
@@ -72,6 +73,7 @@ func main() {
 			*kubeconfig,
 			*keepContext,
 			*port,
+			*namespace,
 			*manual_input)
 
 		// Check if we have all the required parameters
@@ -136,6 +138,7 @@ func main() {
 	cfg.ClusterServerAddress = cluster.APIServer
 	cfg.kubeConfigFile = cluster.KubeConfig
 	cfg.KeepContext = cluster.KeepContext
+	cfg.NameSpace = cluster.NameSpace
 
 	err = SetupKubeConfig(cfg)
 	if err != nil {
