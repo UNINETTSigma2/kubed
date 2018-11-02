@@ -99,10 +99,23 @@ func main() {
 
 	// Manually fetch token if browser is unavailable from console:
 	if (cluster.ManualInput) {
-		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID + ", then report the return token below.")
-		fmt.Print("access_token from redirect url: ")
-		token, err = bufio.NewReader(os.Stdin).ReadString('\n')
-		token = token[:len(token)-1]
+		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID)
+        fmt.Println("After authentication, you are redirected to an invalid URL. Copy/paste this url below:")
+		fmt.Print("Redirect-URL: ")
+        token_url_string := ""
+		token_url_string, err = bufio.NewReader(os.Stdin).ReadString('\n')
+        if err != nil {
+                log.Fatal("Something disastrous happened while getting input from console ", err)
+        }
+        hash_at:=strings.Index(token_url_string,"#")
+        full_hash := token_url_string[hash_at+1:len(token_url_string)]
+        hashes:=strings.Split(full_hash,"&")
+        for _,hash := range hashes {
+            key_value := strings.Split(hash,"=")
+            if key_value[0] == "access_token" {
+                token = key_value[1]
+            }
+        }
 	// Open browser to authenticate user and get access token otherwise:
 	} else {
 		go func(dataportenAuthURL string) {
