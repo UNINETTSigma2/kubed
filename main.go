@@ -101,11 +101,11 @@ func main() {
 	if (cluster.ManualInput) {
 		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID)
         fmt.Println("After authentication, you are redirected to an invalid URL. Copy/paste this url below:")
-		fmt.Print("Redirect-URL: ")
+		fmt.Print("Redirected URL: ")
         token_url_string := ""
 		token_url_string, err = bufio.NewReader(os.Stdin).ReadString('\n')
         if err != nil {
-                log.Fatal("Something disastrous happened while getting input from console ", err)
+                log.Fatal("Something disastrous happened while getting input from console, please run kubed again ", err)
         }
         hash_at:=strings.Index(token_url_string,"#")
         full_hash := token_url_string[hash_at+1:len(token_url_string)]
