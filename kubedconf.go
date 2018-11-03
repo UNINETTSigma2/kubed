@@ -17,6 +17,8 @@ type Cluster struct {
 	KubeConfig  string `yaml:"kubeconfig"`
 	KeepContext bool   `yaml:"keepcontext"`
 	Port        int    `yaml:"port"`
+	NameSpace   string `yaml:"namespace"`
+	ManualInput bool   `yaml:"manualinput"`
 }
 
 func readConfig(name string) (*Cluster, error) {
@@ -49,7 +51,9 @@ func setConfig(
 	client_id string,
 	kubeconfig string,
 	keepContext bool,
-	port int) *Cluster {
+	port int,
+	namespace string,
+	manual_input bool) *Cluster {
 
 	return &Cluster{
 		Name:        name,
@@ -59,6 +63,8 @@ func setConfig(
 		KubeConfig:  kubeconfig,
 		KeepContext: keepContext,
 		Port:        port,
+		NameSpace:   namespace,
+		ManualInput: manual_input,
 	}
 }
 

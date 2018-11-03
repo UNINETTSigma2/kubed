@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"bufio"
 
 	"os"
 
@@ -26,6 +27,8 @@ var (
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
 	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
+	namespace   = flag.String("namespace", "", "Default namespace to use (optional)")
+	manual_input= flag.Bool("manual-input", false, "Input authentication token manually (no local browser)")
 	version     = "none"
 	reqErr      error
 	home        = ""
@@ -69,7 +72,9 @@ func main() {
 			*client_id,
 			*kubeconfig,
 			*keepContext,
-			*port)
+			*port,
+			*namespace,
+			*manual_input)
 
 		// Check if we have all the required parameters
 		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
@@ -89,16 +94,40 @@ func main() {
 	}
 
 	log.Info("Requesting Access Token from Dataporten")
+	err = nil
+	token := ""
 
-	// Open browser to authenticate user and get access token
-	go func(dataportenAuthURL string) {
-		err = browser.OpenURL(dataportenAuthURL)
-		if err != nil {
-			log.Fatal("Failed in opening browser ", err)
-		}
-	} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
+	// Manually fetch token if browser is unavailable from console:
+	if (cluster.ManualInput) {
+		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID)
+        fmt.Println("After authentication, you are redirected to an invalid URL. Copy/paste this url below:")
+		fmt.Print("Redirected URL: ")
+        token_url_string := ""
+		token_url_string, err = bufio.NewReader(os.Stdin).ReadString('\n')
+        if err != nil {
+                log.Fatal("Something disastrous happened while getting input from console, please run kubed again ", err)
+        }
+        hash_at:=strings.Index(token_url_string,"#")
+        full_hash := token_url_string[hash_at+1:len(token_url_string)]
+        hashes:=strings.Split(full_hash,"&")
+        for _,hash := range hashes {
+            key_value := strings.Split(hash,"=")
+            if key_value[0] == "access_token" {
+                token = key_value[1]
+            }
+        }
+	// Open browser to authenticate user and get access token otherwise:
+	} else {
+		go func(dataportenAuthURL string) {
+			err = browser.OpenURL(dataportenAuthURL)
+			if err != nil {
+				log.Fatal("Failed in opening browser ", err)
+			}
+		} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
 
-	token, err := getToken(cluster.Port)
+		token, err = getToken(cluster.Port)
+	}
+
 	if err != nil {
 		log.Fatal("Error in getting access token", err)
 	}
@@ -124,6 +153,7 @@ func main() {
 	cfg.ClusterServerAddress = cluster.APIServer
 	cfg.kubeConfigFile = cluster.KubeConfig
 	cfg.KeepContext = cluster.KeepContext
+	cfg.NameSpace = cluster.NameSpace
 
 	err = SetupKubeConfig(cfg)
 	if err != nil {

@@ -32,6 +32,9 @@ type KubeConfigSetup struct {
 
 	// kubeConfigFile is the path where the kube config is stored
 	kubeConfigFile string
+
+	// NameSpace is the default namespace used with kubectl. May be blank.
+	NameSpace string
 }
 
 // SetupKubeconfig reads config from disk, adds the minikube settings, and writes it back.
@@ -61,6 +64,9 @@ func SetupKubeConfig(cfg *KubeConfigSetup) error {
 	context := api.NewContext()
 	context.Cluster = cfg.ClusterName
 	context.AuthInfo = userName
+	if (cfg.NameSpace != "") {
+		context.Namespace = cfg.NameSpace
+	}
 	config.Contexts[contextName] = context
 
 	// Only set current context to minikube if the user has not used the keepContext flag
