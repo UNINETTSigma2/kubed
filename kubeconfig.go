@@ -14,6 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd/api/latest"
 )
 
+// KubeConfigSetup structure
 type KubeConfigSetup struct {
 	// The name of the cluster for this context
 	ClusterName string
@@ -37,7 +38,7 @@ type KubeConfigSetup struct {
 	NameSpace string
 }
 
-// SetupKubeconfig reads config from disk, adds the minikube settings, and writes it back.
+// SetupKubeConfig reads config from disk, adds the minikube settings, and writes it back.
 // activeContext is true when minikube is the CurrentContext
 // If no CurrentContext is set, the given name will be used.
 func SetupKubeConfig(cfg *KubeConfigSetup) error {
@@ -64,7 +65,7 @@ func SetupKubeConfig(cfg *KubeConfigSetup) error {
 	context := api.NewContext()
 	context.Cluster = cfg.ClusterName
 	context.AuthInfo = userName
-	if (cfg.NameSpace != "") {
+	if cfg.NameSpace != "" {
 		context.Namespace = cfg.NameSpace
 	}
 	config.Contexts[contextName] = context
@@ -115,7 +116,7 @@ func ReadConfigOrNew(filename string) (*api.Config, error) {
 // If the file exists, it's contents will be overwritten.
 func WriteConfig(config *api.Config, filename string) error {
 	if config == nil {
-		log.Error("could not write to '%s': config can't be nil", filename)
+		log.Errorf("could not write to '%s': config can't be nil", filename)
 	}
 
 	// encode config to YAML

@@ -39,9 +39,9 @@ func TestSetupKubeConfig(t *testing.T) {
 		ClusterName:              "test",
 		ClusterServerAddress:     "192.168.1.1:8080",
 		CertificateAuthorityData: []byte("testing.crt"),
-		Token:          "test-token",
-		kubeConfigFile: "/tmp/.kube/config",
-		KeepContext:    false,
+		Token:                    "test-token",
+		kubeConfigFile:           "/tmp/.kube/config",
+		KeepContext:              false,
 	}
 
 	var tests = []struct {
@@ -70,9 +70,9 @@ func TestSetupKubeConfig(t *testing.T) {
 				ClusterName:              "test",
 				ClusterServerAddress:     "192.168.1.1:8080",
 				CertificateAuthorityData: []byte("testing.crt"),
-				Token:          "test-token",
-				kubeConfigFile: "/tmp/.kube/config",
-				KeepContext:    true,
+				Token:                    "test-token",
+				kubeConfigFile:           "/tmp/.kube/config",
+				KeepContext:              true,
 			},
 			existingCfg: fakeKubeCfg,
 		},

@@ -9,10 +9,11 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Cluster structure to setup kubeconfig
 type Cluster struct {
 	Name        string `yaml:"name"`
 	APIServer   string `yaml:"apiserver"`
-	IssuerUrl   string `yaml:"issuer"`
+	IssuerURL   string `yaml:"issuer"`
 	ClientID    string `yaml:"clientid"`
 	KubeConfig  string `yaml:"kubeconfig"`
 	KeepContext bool   `yaml:"keepcontext"`
@@ -47,24 +48,24 @@ func readConfig(name string) (*Cluster, error) {
 func setConfig(
 	name string,
 	apiserver string,
-	issuerUrl string,
-	client_id string,
+	issuerURL string,
+	clientID string,
 	kubeconfig string,
 	keepContext bool,
 	port int,
 	namespace string,
-	manual_input bool) *Cluster {
+	manualInput bool) *Cluster {
 
 	return &Cluster{
 		Name:        name,
 		APIServer:   apiserver,
-		IssuerUrl:   issuerUrl,
-		ClientID:    client_id,
+		IssuerURL:   issuerURL,
+		ClientID:    clientID,
 		KubeConfig:  kubeconfig,
 		KeepContext: keepContext,
 		Port:        port,
 		NameSpace:   namespace,
-		ManualInput: manual_input,
+		ManualInput: manualInput,
 	}
 }
 

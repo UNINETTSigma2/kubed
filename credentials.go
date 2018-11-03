@@ -7,19 +7,20 @@ import (
 	"github.com/parnurzeal/gorequest"
 )
 
+// JWTToken structure
 type JWTToken struct {
 	Token string `json:"token"`
 }
 
-type CA struct {
+type ca struct {
 	Cert string `json:"cert"`
 }
 
-func getJWTToken(access_token string, issuerUrl string) (string, error) {
+func getJWTToken(accessToken string, issuerURL string) (string, error) {
 	var jwt JWTToken
 
-	resp, _, err := gorequest.New().Get(issuerUrl).
-		Set("Authorization", "Bearer "+access_token).
+	resp, _, err := gorequest.New().Get(issuerURL).
+		Set("Authorization", "Bearer "+accessToken).
 		EndStruct(&jwt)
 
 	if err != nil {
@@ -35,11 +36,11 @@ func getJWTToken(access_token string, issuerUrl string) (string, error) {
 	return jwt.Token, nil
 }
 
-func getCACert(issuerUrl string) ([]byte, error) {
-	var ca CA
+func getCACert(issuerURL string) ([]byte, error) {
+	var caInstance ca
 
-	resp, _, err := gorequest.New().Get(issuerUrl + "/ca").
-		EndStruct(&ca)
+	resp, _, err := gorequest.New().Get(issuerURL + "/ca").
+		EndStruct(&caInstance)
 
 	if err != nil {
 		log.Warn("Failed in fetching CA certificate ", err)
@@ -50,5 +51,5 @@ func getCACert(issuerUrl string) ([]byte, error) {
 		log.Warn("Failed in fetching CA certificate, responsecode: ", resp.StatusCode)
 		return nil, errors.New("Failed in fetching CA certificate")
 	}
-	return []byte(ca.Cert), nil
+	return []byte(caInstance.Cert), nil
 }

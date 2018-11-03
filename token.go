@@ -71,7 +71,7 @@ func getToken(port int) (string, error) {
 
 	token := <-done
 
-   	err := srv.Close()
+	err := srv.Close()
 	if err != nil {
 		return token, errors.Wrap(err, "Error shutting down server")
 	}

@@ -1,13 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
-	"bufio"
-
-	"os"
 
 	log "github.com/Sirupsen/logrus"
 	colorable "github.com/mattn/go-colorable"
@@ -20,15 +19,15 @@ const kubedConf = ".kubedconf"
 var (
 	kubeconfig  = flag.String("kube-config", "~/.kube/config", "Absolute path to the kubeconfig config to manage settings")
 	apiserver   = flag.String("api-server", "", "Address of Kubernetes API server (Required)")
-	issuerUrl   = flag.String("issuer", "", "Address of JWT Token Issuer (Required)")
+	issuerURL   = flag.String("issuer", "", "Address of JWT Token Issuer (Required)")
 	clusterName = flag.String("name", "", "Name of this Kubernetes cluster, used for context as well (Required)")
 	showVersion = flag.Bool("version", false, "Prints version information and exits")
 	keepContext = flag.Bool("keep-context", false, "Keep the current context or switch to newly created one")
 	port        = flag.Int("port", 49999, "Port number where Oauth2 Provider will redirect Kubed")
 	renew       = flag.String("renew", "", "Name of the cluster to renew JWT token for")
-	client_id   = flag.String("client-id", "", "Client ID for Kubed app (Required)")
+	clientID    = flag.String("client-id", "", "Client ID for Kubed app (Required)")
 	namespace   = flag.String("namespace", "", "Default namespace to use (optional)")
-	manual_input= flag.Bool("manual-input", false, "Input authentication token manually (no local browser)")
+	manualInput = flag.Bool("manual-input", false, "Input authentication token manually (no local browser)")
 	version     = "none"
 	reqErr      error
 	home        = ""
@@ -68,16 +67,16 @@ func main() {
 		cluster = setConfig(
 			*clusterName,
 			*apiserver,
-			*issuerUrl,
-			*client_id,
+			*issuerURL,
+			*clientID,
 			*kubeconfig,
 			*keepContext,
 			*port,
 			*namespace,
-			*manual_input)
+			*manualInput)
 
 		// Check if we have all the required parameters
-		if cluster.Name == "" || cluster.IssuerUrl == "" || cluster.APIServer == "" || cluster.ClientID == "" {
+		if cluster.Name == "" || cluster.IssuerURL == "" || cluster.APIServer == "" || cluster.ClientID == "" {
 			log.Fatal("Please provide all the required parameter, refer ", os.Args[0], " -h")
 		}
 
@@ -98,32 +97,32 @@ func main() {
 	token := ""
 
 	// Manually fetch token if browser is unavailable from console:
-	if (cluster.ManualInput) {
+	if cluster.ManualInput {
 		fmt.Println("Open a browser and navigate to " + authURL + "?response_type=token&client_id=" + cluster.ClientID)
-        fmt.Println("After authentication, you are redirected to an invalid URL. Copy/paste this url below:")
+		fmt.Println("After authentication, you are redirected to an invalid URL. Copy/paste this url below:")
 		fmt.Print("Redirected URL: ")
-        token_url_string := ""
-		token_url_string, err = bufio.NewReader(os.Stdin).ReadString('\n')
-        if err != nil {
-                log.Fatal("Something disastrous happened while getting input from console, please run kubed again ", err)
-        }
-        hash_at:=strings.Index(token_url_string,"#")
-        full_hash := token_url_string[hash_at+1:len(token_url_string)]
-        hashes:=strings.Split(full_hash,"&")
-        for _,hash := range hashes {
-            key_value := strings.Split(hash,"=")
-            if key_value[0] == "access_token" {
-                token = key_value[1]
-            }
-        }
-	// Open browser to authenticate user and get access token otherwise:
+		tokenURLString := ""
+		tokenURLString, err = bufio.NewReader(os.Stdin).ReadString('\n')
+		if err != nil {
+			log.Fatal("Something disastrous happened while getting input from console, please run kubed again ", err)
+		}
+		hashAt := strings.Index(tokenURLString, "#")
+		fullHash := tokenURLString[hashAt+1 : len(tokenURLString)]
+		hashes := strings.Split(fullHash, "&")
+		for _, hash := range hashes {
+			keyValue := strings.Split(hash, "=")
+			if keyValue[0] == "access_token" {
+				token = keyValue[1]
+			}
+		}
+		// Open browser to authenticate user and get access token otherwise:
 	} else {
 		go func(dataportenAuthURL string) {
 			err = browser.OpenURL(dataportenAuthURL)
 			if err != nil {
 				log.Fatal("Failed in opening browser ", err)
 			}
-		} (authURL + "?response_type=token&client_id=" + cluster.ClientID)
+		}(authURL + "?response_type=token&client_id=" + cluster.ClientID)
 
 		token, err = getToken(cluster.Port)
 	}
@@ -136,15 +135,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.Info("Requesting JWT Token from ", cluster.IssuerUrl)
+	log.Info("Requesting JWT Token from ", cluster.IssuerURL)
 
 	cfg := new(KubeConfigSetup)
-	cfg.Token, err = getJWTToken(token, cluster.IssuerUrl)
+	cfg.Token, err = getJWTToken(token, cluster.IssuerURL)
 	if err != nil {
 		log.Fatal("Failed in getting JWT token ", err)
 		os.Exit(1)
 	}
-	cfg.CertificateAuthorityData, err = getCACert(cluster.IssuerUrl)
+	cfg.CertificateAuthorityData, err = getCACert(cluster.IssuerURL)
 	if err != nil {
 		log.Warn("No custom CA certificate provided, assuming running with standard certificate")
 	}
